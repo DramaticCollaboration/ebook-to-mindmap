@@ -9,8 +9,9 @@ import {
 import { Languages } from 'lucide-react'
 
 const languages = [
-  { code: 'zh', name: '中文', flag: '🇨🇳' },
-  { code: 'en', name: 'English', flag: '🇺🇸' }
+  { code: 'ko', name: '한국어'},
+  { code: 'zh', name: '中文'},
+  { code: 'en', name: 'English'}
 ]
 
 export function LanguageSwitcher() {
@@ -27,8 +28,7 @@ export function LanguageSwitcher() {
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="sm" className="flex items-center gap-2 absolute right-0 top-0">
           <Languages className="h-4 w-4" />
-          <span className="hidden sm:inline">{currentLanguage.flag} {currentLanguage.name}</span>
-          <span className="sm:hidden">{currentLanguage.flag}</span>
+          <span className="hidden sm:inline">{currentLanguage.name}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
@@ -40,7 +40,6 @@ export function LanguageSwitcher() {
               i18n.language === language.code ? 'bg-accent' : ''
             }`}
           >
-            <span>{language.flag}</span>
             <span>{language.name}</span>
           </DropdownMenuItem>
         ))}

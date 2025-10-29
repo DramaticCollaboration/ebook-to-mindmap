@@ -28,7 +28,7 @@ export function PdfReader({ chapter, bookData, onClose, className }: PdfReaderPr
   const [pdfProcessor] = useState(() => new PdfProcessor())
   const canvasContainerRef = useRef<HTMLDivElement>(null)
 
-  // 加载章节的页面内容
+  // Load the chapter's page content
   useEffect(() => {
     const loadChapterPages = async () => {
       if (!chapter || !bookData?.pdfDocument) {
@@ -42,8 +42,8 @@ export function PdfReader({ chapter, bookData, onClose, className }: PdfReaderPr
         setChapterPages(pages)
         setCurrentPageIndex(0)
       } catch (error) {
-        console.error('加载PDF章节页面失败:', error)
-        // 如果获取页面失败，设置空数组
+        console.error('Failed to load PDF chapter page:', error)
+        //  If retrieving the page fails, set an empty array.
         setChapterPages([])
       } finally {
         setIsLoadingPages(false)
@@ -53,14 +53,14 @@ export function PdfReader({ chapter, bookData, onClose, className }: PdfReaderPr
     loadChapterPages()
   }, [chapter, bookData, pdfProcessor])
 
-  // 渲染当前页面的canvas
+  // Render the canvas of the current page
   useEffect(() => {
     if (chapterPages[currentPageIndex]?.canvas && canvasContainerRef.current) {
       const canvas = chapterPages[currentPageIndex].canvas!
       canvasContainerRef.current.innerHTML = ''
       canvasContainerRef.current.appendChild(canvas)
 
-      // 设置canvas样式
+      // Set canvas style
       canvas.style.maxWidth = '100%'
       canvas.style.height = 'auto'
       canvas.style.border = '1px solid #e5e7eb'
@@ -85,7 +85,7 @@ export function PdfReader({ chapter, bookData, onClose, className }: PdfReaderPr
 
   return (
     <div className={cn("w-full", className)}>
-      {/* 主要阅读区域 */}
+      {/*  Main reading area */}
       <Card className='gap-0'>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
@@ -109,7 +109,7 @@ export function PdfReader({ chapter, bookData, onClose, className }: PdfReaderPr
             </div>
           </div>
 
-          {/* 页面导航 */}
+          {/* Page Navigation */}
           {totalPages > 1 && (
             <div className="flex items-center justify-between pt-2">
               <Button

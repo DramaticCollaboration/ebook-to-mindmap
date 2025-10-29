@@ -1,34 +1,34 @@
-// 章节总结相关的prompt模板
+// Chapter summary related prompt template
 
 export const getFictionChapterSummaryPrompt = (title: string, content: string) => {
-  const userPrompt = `请为以下章节内容生成一个详细总结：
+  const userPrompt = `Please generate a detailed summary for the following section：
 
-章节标题：${title}
+Chapter title：${title}
 
-章节内容：
+Chapter Contents：
 ${content}
 
-请用自然流畅的语言总结本章内容，包括主要情节发展、重要人物表现、关键观点或转折，以及本章在整个故事中的作用和意义。
+Please summarize the content of this chapter in natural and fluent language, including the main plot developments, the performance of important characters, key ideas or turning points, and the role and significance of this chapter in the entire story.
 
-注意：如果内容是致谢、目录、前言、序言等无实质故事内容的页面，请直接回复"无需总结"。`
+Note: If the page contains acknowledgments, table of contents, preface, foreword, or similar content without a substantial story, please reply "No summary needed"`
   
   return userPrompt
 }
 
 export const getNonFictionChapterSummaryPrompt = (title: string, content: string) => {
-  const userPrompt = `请为以下社科类书籍章节内容生成一个详细总结：
+  const userPrompt = ` Please generate a detailed summary for the following social science book chapters：
 
-章节标题：${title}
+Chapter title：${title}
 
-章节内容：
+Chapter Contents：
 ${content}
 
-请用自然流畅的语言总结本章内容，包括：
+Please summarize the content of this chapter in natural and fluent language, including:
 
-- 主要观点，以及支持这个观点的案例或研究发现
-- 关键概念
-- 保留几句有洞见的观点原文
-- 给出指导实际生活的建议或应用（必须与此章节内容强关联）`
+- Key points, along with supporting case studies or research findings.
+- Key Concepts
+- Keep a few insightful original texts
+- Provide practical advice or applications (must be strongly related to the content of this chapter).`
   
   return userPrompt
 }

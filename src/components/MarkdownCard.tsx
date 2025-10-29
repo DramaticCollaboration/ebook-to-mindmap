@@ -11,32 +11,32 @@ import { ViewContentDialog } from './ViewContentDialog'
 import { useTranslation } from 'react-i18next'
 
 interface MarkdownCardProps {
-  /** 章节ID */
-  id: string
-  /** 章节标题 */
-  title: string
-  /** 章节内容（原始内容） */
-  content: string
-  /** Markdown格式的总结内容 */
-  markdownContent: string
-  /** 章节索引 */
-  index: number
-  /** 清除缓存的回调函数 */
-  onClearCache?: (chapterId: string) => void
-  /** 阅读章节的回调函数 */
-  onReadChapter?: () => void
-  /** 是否显示清除缓存按钮 */
-  showClearCache?: boolean
-  /** 是否显示查看内容按钮 */
-  showViewContent?: boolean
-  /** 是否显示复制按钮 */
-  showCopyButton?: boolean
-  /** 是否显示阅读按钮 */
-  showReadButton?: boolean
-  /** 自定义类名 */
-  className?: string
-  /** 是否默认折叠 */
-  defaultCollapsed?: boolean
+    /** Chapter ID */
+    id: string
+    /** Chapter Title */
+    title: string
+    /** Chapter content (original content) */
+    content: string
+    /** Summary content in Markdown format*/
+    markdownContent: string
+    /** Chapter index */
+    index: number
+    /** Callback function to clear cache*/
+    onClearCache?: (chapterId: string) => void
+    /** Callback function for reading chapters*/
+    onReadChapter?: () => void
+    /** Should the "Clear Cache" button be displayed? */
+    showClearCache?: boolean
+    /** Show/ content button */
+    showViewContent?: boolean
+    /** Should the copy button be displayed? */
+    showCopyButton?: boolean
+    /** Show/ button? */
+    showReadButton?: boolean
+    /** Custom class name */
+    className?: string
+    /** Whether to fold by default */
+    defaultCollapsed?: boolean
 }
 
 export const MarkdownCard: React.FC<MarkdownCardProps> = ({

@@ -19,7 +19,7 @@ interface Chapter {
 }
 
 interface AIConfig {
-  provider: 'gemini' | 'openai' | 'ollama' | '302.ai'
+  provider: 'gemini' | 'openai' | 'ollama' | '302.ai'  | 'qwen3'
   apiKey: string
   apiUrl?: string // 用于OpenAI兼容的API地址
   model?: string
@@ -42,19 +42,26 @@ export class AIService {
         model: currentConfig.model || 'gemini-1.5-flash'
       })
     } else if (currentConfig.provider === 'openai' || currentConfig.provider === '302.ai') {
-      // OpenAI兼容的配置
+      // OpenAI compatible configuration
       this.model = {
         apiUrl: currentConfig.apiUrl || 'https://api.openai.com/v1',
         apiKey: currentConfig.apiKey,
         model: currentConfig.model || 'gpt-3.5-turbo'
       }
     } else if (currentConfig.provider === 'ollama') {
-      // Ollama配置
+      // Ollama configuration
       this.model = {
         apiUrl: currentConfig.apiUrl || 'http://localhost:11434',
         apiKey: currentConfig.apiKey || '', // Ollama通常不需要API密钥
         model: currentConfig.model || 'llama2'
       }
+    }else if (currentConfig.provider === 'qwen3') {
+        // OpenAI
+        this.model = {
+            apiUrl: currentConfig.apiUrl || 'https://llm-api.empasy.com/v1',
+            apiKey: currentConfig.apiKey,
+            model: currentConfig.model || 'Qwen3-VL-8B-Instruct'
+        }
     }
   }
 
@@ -68,28 +75,28 @@ export class AIService {
         ? getFictionChapterSummaryPrompt(title, content)
         : getNonFictionChapterSummaryPrompt(title, content)
 
-      // 如果有自定义提示词，则拼接到原始prompt后面
+      // If there are custom prompts, append them to the original prompt.
       if (customPrompt && customPrompt.trim()) {
-        prompt += `\n\n补充要求：${customPrompt.trim()}`
+        prompt += `\n\nAdditional requirement：${customPrompt.trim()}`
       }
 
       const summary = await this.generateContent(prompt, outputLanguage)
 
       if (!summary || summary.trim().length === 0) {
-        throw new Error('AI返回了空的总结')
+        throw new Error('AI returned an empty summar')
       }
 
       return summary.trim()
     } catch (error) {
-      throw new Error(`章节总结失败: ${error instanceof Error ? error.message : '未知错误'}`)
+      throw new Error(`Chapter summary failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 
   async analyzeConnections(chapters: Chapter[], outputLanguage: SupportedLanguage = 'en'): Promise<string> {
     try {
-      // 构建章节摘要信息
+      // Build chapter summary information
       const chapterSummaries = chapters.map((chapter) => 
-        `${chapter.title}:\n${chapter.summary || '无总结'}`
+        `${chapter.title}:\n${chapter.summary || 'No summary'}`
       ).join('\n\n')
 
       const prompt = getChapterConnectionsAnalysisPrompt(chapterSummaries)
@@ -97,12 +104,12 @@ export class AIService {
       const connections = await this.generateContent(prompt, outputLanguage)
 
       if (!connections || connections.trim().length === 0) {
-        throw new Error('AI返回了空的关联分析')
+        throw new Error('AI returned an empty association analysis')
       }
 
       return connections.trim()
     } catch (error) {
-      throw new Error(`章节关联分析失败: ${error instanceof Error ? error.message : '未知错误'}`)
+      throw new Error(`Chapter association analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 
@@ -113,9 +120,9 @@ export class AIService {
     outputLanguage: SupportedLanguage = 'en'
   ): Promise<string> {
     try {
-      // 构建简化的章节信息
+      // Construct simplified chapter information
       const chapterInfo = chapters.map((chapter, index) => 
-        `第${index + 1}章：${chapter.title}，内容：${chapter.summary || '无总结'}`
+        `Chapter ${index + 1}：${chapter.title}，content：${chapter.summary || 'No summary'}`
       ).join('\n')
 
       const prompt = getOverallSummaryPrompt(bookTitle, chapterInfo, connections)
@@ -123,79 +130,79 @@ export class AIService {
       const summary = await this.generateContent(prompt, outputLanguage)
 
       if (!summary || summary.trim().length === 0) {
-        throw new Error('AI返回了空的全书总结')
+        throw new Error('AI returned an empty book summary')
       }
 
       return summary.trim()
     } catch (error) {
-      throw new Error(`全书总结生成失败: ${error instanceof Error ? error.message : '未知错误'}`)
+      throw new Error(`Failed to generate the book summary: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 
   async generateChapterMindMap(content: string, outputLanguage: SupportedLanguage = 'en', customPrompt?: string): Promise<MindElixirData> {
     try {
       const basePrompt = getChapterMindMapPrompt()
-      let prompt = basePrompt + `章节内容：\n${content}`
+      let prompt = basePrompt + `Chapter conten：\n${content}`
 
-      // 如果有自定义提示词，则拼接到原始prompt后面
+      // If there are custom prompts, append them to the original prompt.
       if (customPrompt && customPrompt.trim()) {
-        prompt += `\n\n补充要求：${customPrompt.trim()}`
+        prompt += `\n\nAdditional requirement：${customPrompt.trim()}`
       }
 
       const mindMapJson = await this.generateContent(prompt, outputLanguage)
 
       if (!mindMapJson || mindMapJson.trim().length === 0) {
-        throw new Error('AI返回了空的思维导图数据')
+        throw new Error('AI returned empty mind map data')
       }
       
-      // 尝试解析JSON
+      // Attempt to parse JSON
       try {
         return JSON.parse(mindMapJson.trim())
       } catch (parseError) {
-        // 尝试从代码块中提取JSON
+        //  Try to extract JSON from the code block
         const jsonMatch = mindMapJson.match(/```(?:json)?\s*([\s\S]*?)```/)
         if (jsonMatch && jsonMatch[1]) {
           try {
             return JSON.parse(jsonMatch[1].trim())
           } catch (extractError) {
-            throw new Error('AI返回的思维导图数据格式不正确')
+            throw new Error('The mind map data returned by AI is in an incorrect format')
           }
         }
-        throw new Error('AI返回的思维导图数据格式不正确')
+        throw new Error('The mind map data returned by AI is in an incorrect format')
       }
     } catch (error) {
-      throw new Error(`章节思维导图生成失败: ${error instanceof Error ? error.message : '未知错误'}`)
+      throw new Error(`Failed to generate chapter mind map: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 
   async generateMindMapArrows(combinedMindMapData: any, outputLanguage: SupportedLanguage = 'en'): Promise<any> {
     try {
       const basePrompt = getMindMapArrowPrompt()
-      const prompt = basePrompt + `\n\n当前思维导图数据：\n${JSON.stringify(combinedMindMapData, null, 2)}`
+      const prompt = basePrompt + `\n\nCurrent mind map data：\n${JSON.stringify(combinedMindMapData, null, 2)}`
 
       const arrowsJson = await this.generateContent(prompt, outputLanguage)
 
       if (!arrowsJson || arrowsJson.trim().length === 0) {
-        throw new Error('AI返回了空的箭头数据')
+        throw new Error('AI returned an empty arrow data')
       }
 
-      // 尝试解析JSON
+      // Attempt to parse JSON
       try {
         return JSON.parse(arrowsJson.trim())
       } catch (parseError) {
-        // 尝试从代码块中提取JSON
+        // Try to extract JSON from the code block
         const jsonMatch = arrowsJson.match(/```(?:json)?\s*([\s\S]*?)```/)
         if (jsonMatch && jsonMatch[1]) {
           try {
             return JSON.parse(jsonMatch[1].trim())
           } catch (extractError) {
-            throw new Error('AI返回的箭头数据格式不正确')
+            throw new Error('The arrow data format returned by AI is incorrect')
           }
         }
-        throw new Error('AI返回的箭头数据格式不正确')
+        throw new Error('The arrow data format returned by AI is incorrect')
       }
     } catch (error) {
-      throw new Error(`思维导图箭头生成失败: ${error instanceof Error ? error.message : '未知错误'}`)
+      throw new Error(`Mind map arrow generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 
@@ -204,48 +211,49 @@ export class AIService {
       const basePrompt = getChapterMindMapPrompt()
       const chaptersContent = chapters.map(item=>item.content).join('\n\n ------------- \n\n')
       let prompt = `${basePrompt}
-        请为整本书《${bookTitle}》生成一个完整的思维导图，将所有章节的内容整合在一起。
-        章节内容：\n${chaptersContent}`
+      Please create a complete mind map for the entire book 《${bookTitle}》 integrating the content of all chapters.
+      Chapter content:\\n${chaptersContent}`
 
-      // 如果有自定义提示词，则拼接到原始prompt后面
+      //  If there are custom prompts, append them to the original prompt.
       if (customPrompt && customPrompt.trim()) {
-        prompt += `\n\n补充要求：${customPrompt.trim()}`
+        prompt += `\n\nAdditional requirement：${customPrompt.trim()}`
       }
 
       const mindMapJson = await this.generateContent(prompt, 'en')
 
       if (!mindMapJson || mindMapJson.trim().length === 0) {
-        throw new Error('AI返回了空的思维导图数据')
+        throw new Error('AI returned empty mind map data')
       }
       
-      // 尝试解析JSON
+      // Attempt to parse JSON
       try {
         return JSON.parse(mindMapJson.trim())
       } catch (parseError) {
-        // 尝试从代码块中提取JSON
+        // Try to extract JSON from the code block
         const jsonMatch = mindMapJson.match(/```(?:json)?\s*([\s\S]*?)```/)
         if (jsonMatch && jsonMatch[1]) {
           try {
             return JSON.parse(jsonMatch[1].trim())
           } catch (extractError) {
-            throw new Error('AI返回的思维导图数据格式不正确')
+            throw new Error('The mind map data returned by AI is in an incorrect format')
           }
         }
-        throw new Error('AI返回的思维导图数据格式不正确')
+        throw new Error('The mind map data returned by AI is in an incorrect format')
       }
     } catch (error) {
-      throw new Error(`整书思维导图生成失败: ${error instanceof Error ? error.message : '未知错误'}`)
+        console.error('Error:', error)
+      throw new Error(`Failed to generate the whole book mind map: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 
-  // 统一的内容生成方法
+  // Unified content generation method
   private async generateContent(prompt: string, outputLanguage?: SupportedLanguage): Promise<string> {
     const config = this.getCurrentConfig()
     const language = outputLanguage || 'en'
     const systemPrompt = getLanguageInstruction(language)
     
     if (config.provider === 'gemini') {
-      // Gemini API 不直接支持系统提示，将系统提示合并到用户提示前面
+      // Gemini API does not directly support system prompts, merge system prompts before user prompts
       const finalPrompt = `${prompt}\n\n**${systemPrompt}**`
       const result = await this.model.generateContent(finalPrompt, {
         generationConfig: {
@@ -254,7 +262,7 @@ export class AIService {
       })
       const response = await result.response
       return response.text()
-    } else if (config.provider === 'openai' || config.provider === '302.ai') {
+    } else if (config.provider === 'openai' || config.provider === '302.ai' || config.provider === 'qwen3') {
       const messages: Array<{role: 'system' | 'user', content: string}> = [
         {
           role: 'user',
@@ -277,7 +285,7 @@ export class AIService {
 
       if (!response.ok) {
         const errorBody = await response.text()
-        throw new Error(`OpenAI API请求失败: ${response.status} ${response.statusText} - ${errorBody}`)
+        throw new Error(`OpenAI API request failed: ${response.status} ${response.statusText} - ${errorBody}`)
       }
 
       const data = await response.json()
@@ -299,7 +307,7 @@ export class AIService {
         'Content-Type': 'application/json'
       }
       
-      // 如果提供了API密钥，则添加Authorization头
+      // If an API key is provided, add an Authorization header.
       if (this.model.apiKey) {
         requestHeaders['Authorization'] = `Bearer ${this.model.apiKey}`
       }
@@ -318,21 +326,21 @@ export class AIService {
       })
 
       if (!response.ok) {
-        throw new Error(`Ollama API请求失败: ${response.status} ${response.statusText}`)
+        throw new Error(`Ollama API request failed: ${response.status} ${response.statusText}`)
       }
 
       const data = await response.json()
       return data.message?.content || ''
     }
     
-    throw new Error(`不支持的AI提供商: ${config.provider}`)
+    throw new Error(`Unsupported AI provider: ${config.provider}`)
   }
 
   // 辅助方法：检查API连接
   async testConnection(): Promise<boolean> {
     try {
       const text = await this.generateContent(getTestConnectionPrompt())
-      return text.includes('连接成功') || text.includes('成功')
+      return text.includes('Connection successful') || text.includes('成功')
     } catch (error) {
       return false
     }

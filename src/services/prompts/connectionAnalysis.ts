@@ -1,33 +1,33 @@
 // 章节关联分析相关的prompt模板
 
 export const getChapterConnectionsAnalysisPrompt = (chapterSummaries: string) => {
-  const userPrompt = `请帮我分析这本书各章节之间的关系，并总结全书的核心内容：
+  const userPrompt = `Please help me analyze the relationships between the chapters of this book and summarize the core content of the entire book：
 
 ${chapterSummaries}
 
-请从以下几个方面来分析：
+Please analyze from the following aspects:
 
-## 1. 章节之间的联系
-- 各章节是如何一步步展开论述的？
-- 哪些重要观点在不同章节中反复出现？
-- 前面的章节为后面的内容做了哪些铺垫？
+## 1. Connections between chapters
+- How does each chapter unfold its argument step by step?
+- Which key points appear repeatedly in different chapters?
+- What foreshadowing did the preceding chapters provide for the content to come?
 
-## 2. 全书的核心主题
-- 这本书最想告诉读者什么？
-- 作者的主要观点是什么？
-- 有哪些值得特别关注的重要概念？
+## 2. The Core Theme of the Book
+What is the main message this book wants to convey to its readers?
+What is the author's main point?
+- What are some important concepts that deserve special attention?
 
-## 3. 实用价值
-- 这本书对现实生活有什么指导意义？
-- 读者可以从中学到什么实用的知识或方法？
-- 哪些观点可能会改变我们的思考方式？
+## 3. Practical Value
+What guidance does this book offer for real life?
+What practical knowledge or methods can readers learn from this?
+- What perspectives might change the way we think?
 
-## 4. 简明总结
-- 用几句话概括这本书的精华
-- 推荐给什么样的人阅读
-- 阅读这本书的最大收获是什么
+## 4. Brief Summary
+- Summarize the essence of this book in a few sentences
+- Who should I recommend this to?
+What was the biggest takeaway from reading this book?
 
-请用通俗易懂的语言来分析，让普通读者也能轻松理解书籍的价值和意义。`
+Please use plain and easy-to-understand language to analyze the book so that ordinary readers can easily understand its value and significance.`
   
   return userPrompt
 }

@@ -33,8 +33,8 @@ export class EpubProcessor {
       await book.ready
 
       // 获取书籍元数据
-      const title = book.packaging?.metadata?.title || '未知标题'
-      const author = book.packaging?.metadata?.creator || '未知作者'
+      const title = book.packaging?.metadata?.title || 'Unknown title'
+      const author = book.packaging?.metadata?.creator || 'Unknown author'
 
       return {
         book,
@@ -42,7 +42,7 @@ export class EpubProcessor {
         author
       }
     } catch (error) {
-      throw new Error(`解析EPUB文件失败: ${error instanceof Error ? error.message : '未知错误'}`)
+      throw new Error(`Failed to parse EPUB file: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 
@@ -54,7 +54,7 @@ export class EpubProcessor {
         const toc = book.navigation.toc.filter(item => !item.href.includes('#'))
         // 获取章节信息（先按原始 TOC）
         let chapterInfos = await this.extractChaptersFromToc(book, toc, 0, maxSubChapterDepth)
-        console.log(`📚 [DEBUG] 找到 ${chapterInfos.length} 个章节信息`, chapterInfos)
+        console.log(`📚 [DEBUG] Found ${chapterInfos.length} chapter information`, chapterInfos)
 
         // 回退：当 TOC 长度≤3 时，直接用 spineItems 生成章节信息
         if (toc.length <= 3) {
@@ -63,11 +63,11 @@ export class EpubProcessor {
               const navItem: NavItem = {
                 id: spineItem.idref || `spine-${idx + 1}`,
                 href: spineItem.href,
-                label: spineItem.idref || `章节 ${idx + 1}`,
+                label: spineItem.idref || `Chapter ${idx + 1}`,
                 subitems: []
               }
               return {
-                title: navItem.label || `章节 ${idx + 1}`,
+                title: navItem.label || `Chapter ${idx + 1}`,
                 href: navItem.href!,
                 subitems: [],
                 tocItem: navItem,
@@ -75,7 +75,7 @@ export class EpubProcessor {
               }
             })
             .filter(item => !!item.href)
-          console.log('🔁 [DEBUG] TOC长度≤3，直接用 spineItems 生成章节信息，fallback 章节数:', fallbackChapterInfos.length)
+          console.log('🔁 [DEBUG] TOC length ≤ 3, directly generate chapter information using spineItems, fallback chapter number:', fallbackChapterInfos.length)
 
           if (fallbackChapterInfos.length >= chapterInfos.length) {
             chapterInfos = fallbackChapterInfos
@@ -86,11 +86,11 @@ export class EpubProcessor {
           for (const chapterInfo of chapterInfos) {
             // 检查是否需要跳过此章节
             if (skipNonEssentialChapters && this.shouldSkipChapter(chapterInfo.title)) {
-              console.log(`⏭️ [DEBUG] 跳过无关键内容章节: "${chapterInfo.title}"`)
+              console.log(`⏭️ [DEBUG] Skip chapters without key content: "${chapterInfo.title}"`)
               continue
             }
 
-            console.log(`📄 [DEBUG] 提取章节 "${chapterInfo.title}" (href: ${chapterInfo.href})`)
+            console.log(`📄 [DEBUG] Extracting Chapter "${chapterInfo.title}" (href: ${chapterInfo.href})`)
 
             const chapterContent = await this.extractContentFromHref(book, chapterInfo.href, chapterInfo.subitems)
 
@@ -107,16 +107,16 @@ export class EpubProcessor {
           }
         }
       } catch (tocError) {
-        console.warn(`⚠️ [DEBUG] 无法获取EPUB目录:`, tocError)
+        console.warn(`⚠️ [DEBUG] Unable to retrieve EPUB directory:`, tocError)
       }
       // 应用智能章节检测
       const finalChapters = this.detectChapters(chapters, useSmartDetection)
-      console.log(`📊 [DEBUG] 最终提取到 ${finalChapters.length} 个章节`)
+      console.log(`📊 [DEBUG] Finally extracted ${finalChapters.length} chapters`)
 
       return finalChapters
     } catch (error) {
-      console.error(`❌ [DEBUG] 提取章节失败:`, error)
-      throw new Error(`提取章节失败: ${error instanceof Error ? error.message : '未知错误'}`)
+      console.error(`❌ [DEBUG] Failed to extract chapter:`, error)
+      throw new Error(`Failed to extract chapter: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 
@@ -130,7 +130,7 @@ export class EpubProcessor {
           chapterInfos.push(...subChapters)
         } else if (item.href) {
           const chapterInfo: { title: string, href: string, subitems?: NavItem[], tocItem: NavItem, depth: number } = {
-            title: item.label || `章节 ${chapterInfos.length + 1}`,
+            title: item.label || `chapter ${chapterInfos.length + 1}`,
             href: item.href,
             subitems: item.subitems,
             tocItem: item, // 保存原始TOC项目信息
@@ -139,7 +139,7 @@ export class EpubProcessor {
           chapterInfos.push(chapterInfo)
         }
       } catch (error) {
-        console.warn(`⚠️ [DEBUG] 跳过章节 "${item.label}":`, error)
+        console.warn(`⚠️  [DEBUG] Skip Chapter "${item.label}":`, error)
       }
     }
 
@@ -148,7 +148,7 @@ export class EpubProcessor {
 
   private async extractContentFromHref(book: Book, href: string, subitems?: NavItem[]): Promise<string> {
     try {
-      console.log(`🔍 [DEBUG] 尝试通过href获取章节内容: ${href}`)
+      console.log(`🔍 [DEBUG] Attempting to get chapter content via href: ${href}`)
 
       // 清理href，移除锚点部分
       const cleanHref = href.split('#')[0]
@@ -180,7 +180,7 @@ export class EpubProcessor {
 
       return allContent
     } catch (error) {
-      console.warn(`❌ [DEBUG] 提取章节内容失败 (href: ${href}):`, error)
+      console.warn(`❌  [DEBUG] Failed to extract chapter content (href: ${href}):`, error)
       return ''
     }
   }
@@ -200,7 +200,7 @@ export class EpubProcessor {
       }
 
       if (!section) {
-        console.warn(`❌ [DEBUG] 无法获取章节: ${href}`)
+        console.warn(`❌  [DEBUG] Unable to retrieve chapter: ${href}`)
         return ''
       }
 
@@ -215,7 +215,7 @@ export class EpubProcessor {
 
       return textContent
     } catch (error) {
-      console.warn(`❌ [DEBUG] 获取单个章节内容失败 (href: ${href}):`, error)
+      console.warn(`❌ [DEBUG] Failed to retrieve single chapter conten(href: ${href}):`, error)
       return ''
     }
   }
@@ -230,7 +230,7 @@ export class EpubProcessor {
 
   private extractTextFromXHTML(xhtmlContent: string): { textContent: string } {
     try {
-      console.log(`🔍 [DEBUG] 开始解析XHTML内容，长度: ${xhtmlContent.length}`)
+      console.log(`🔍 [DEBUG] An error occurred during DOM parsing. A regular expression alternative will be used: ${xhtmlContent.length}`)
 
       // 创建一个临时的DOM解析器
       const parser = new DOMParser()
@@ -239,14 +239,14 @@ export class EpubProcessor {
       // 检查解析错误
       const parseError = doc.querySelector('parsererror')
       if (parseError) {
-        console.warn(`⚠️ [DEBUG] DOM解析出现错误，将使用正则表达式备选方案:`, parseError.textContent)
-        throw new Error('DOM解析失败')
+        console.warn(`⚠️ [DEBUG] An error occurred during DOM parsing. A regular expression alternative will be used:`, parseError.textContent)
+        throw new Error('DOM parsing failed')
       }
 
       // 提取正文内容
       const body = doc.querySelector('body')
       if (!body) {
-        throw new Error('未找到body元素')
+        throw new Error('Body element not found')
       }
 
       // 移除脚本和样式标签
@@ -258,18 +258,18 @@ export class EpubProcessor {
 
       textContent = textContent.trim()
 
-      console.log(`✨ [DEBUG] 清理后文本长度: ${textContent.length}`)
+      console.log(`✨ [DEBUG] Text length after cleanup: ${textContent.length}`)
 
       return { textContent }
     } catch (error) {
-      console.warn(`⚠️ [DEBUG] DOM解析失败，使用正则表达式备选方案:`, error)
+      console.warn(`⚠️ [DEBUG] DOM parsing failed, using regular expression as an alternative:`, error)
       // 如果DOM解析失败，使用正则表达式作为备选方案
       return this.extractTextWithRegex(xhtmlContent)
     }
   }
 
   private extractTextWithRegex(xhtmlContent: string): { title: string; textContent: string } {
-    console.log(`🔧 [DEBUG] 使用正则表达式方案解析内容，长度: ${xhtmlContent.length}`)
+    console.log(`🔧 [DEBUG] Parsing content using regular expressions, length: ${xhtmlContent.length}`)
 
     // 移除XML声明和DOCTYPE
     let cleanContent = xhtmlContent
@@ -303,7 +303,7 @@ export class EpubProcessor {
       .replace(/\n\s*\n/g, '\n')
       .trim()
 
-    console.log(`✨ [DEBUG] 正则表达式方案 - 标题: "${title}", 文本长度: ${textContent.length}`)
+    console.log(`✨ [DEBUG] Regular Expression Solution - Title: "${title}", Text Length: ${textContent.length}`)
 
     return { title, textContent }
   }
@@ -324,7 +324,7 @@ export class EpubProcessor {
       }
 
       if (!section) {
-        console.warn(`❌ [DEBUG] 无法获取章节HTML: ${href}`)
+        console.warn(`❌ [DEBUG] Unable to retrieve chapter HTML: ${href}`)
         return ''
       }
 
@@ -336,7 +336,7 @@ export class EpubProcessor {
 
       return chapterHTML
     } catch (error) {
-      console.warn(`❌ [DEBUG] 获取章节HTML失败 (href: ${href}):`, error)
+      console.warn(`❌ [DEBUG] Failed to retrieve chapter HTML (href: ${href}):`, error)
       return ''
     }
   }
@@ -346,14 +346,14 @@ export class EpubProcessor {
       return chapters
     }
 
-    console.log(`🧠 [DEBUG] 启用EPUB智能章节检测，原始章节数: ${chapters.length}`)
+    console.log(`🧠 [DEBUG] Enable EPUB Smart Chapter Detection, Original Chapter Count: ${chapters.length}`)
 
     const chapterPatterns = [
-      /^第[一二三四五六七八九十\d]+章[\s\S]*$/m,
+      /^Chapter [1 2 3 4 5 6 7 8 9 10\d]+章[\s\S]*$/m,
       /^Chapter\s+\d+[\s\S]*$/mi,
-      /^第[一二三四五六七八九十\d]+节[\s\S]*$/m,
+      /^Section [1 2 3 4 5 6 7 8 9 10\d]+节[\s\S]*$/m,
       /^\d+\.[\s\S]*$/m,
-      /^[一二三四五六七八九十]、[\s\S]*$/m
+      /^[1 2 3 4 5 6 7 8 9 10]、[\s\S]*$/m
     ]
 
     const detectedChapters: ChapterData[] = []
@@ -375,7 +375,7 @@ export class EpubProcessor {
           if (match) {
             // 提取章节标题（取前100个字符作为标题）
             const titleMatch = content.match(/^(.{1,100})/)
-            chapterTitle = titleMatch ? titleMatch[1].trim() : `章节 ${chapterCount + 1}`
+            chapterTitle = titleMatch ? titleMatch[1].trim() : `Chapter ${chapterCount + 1}`
             isNewChapter = true
             break
           }
@@ -399,14 +399,14 @@ export class EpubProcessor {
         chapterCount++
         currentChapter = {
           id: chapter.id || `chapter-${chapterCount}`,
-          title: chapterTitle || `第 ${chapterCount} 章`,
+          title: chapterTitle || `Chapter  ${chapterCount}`,
           content: content,
           href: chapter.href,
           tocItem: chapter.tocItem,
           depth: chapter.depth
         }
 
-        console.log(`📖 [DEBUG] 检测到新章节: "${chapterTitle}"`)
+        console.log(`📖 [DEBUG] New chapter detected: "${chapterTitle}"`)
       } else {
         // 合并到当前章节
         currentChapter.content += '\n\n' + content
@@ -425,7 +425,7 @@ export class EpubProcessor {
       })
     }
 
-    console.log(`🔍 [DEBUG] EPUB章节检测完成，找到 ${detectedChapters.length} 个章节`)
+    console.log(`🔍 [DEBUG] EPUB chapter detection complete, found ${detectedChapters.length} chapters`)
 
     return detectedChapters.length > 0 ? detectedChapters : chapters
   }

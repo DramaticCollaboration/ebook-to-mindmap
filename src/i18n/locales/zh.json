@@ -94,7 +94,7 @@
     "copyContent": "复制内容",
     "expand": "展开",
     "collapse": "折叠",
-    "error": "未知错误"
+    "error": "Unknown error"
   },
   "config": {
     "title": "配置",

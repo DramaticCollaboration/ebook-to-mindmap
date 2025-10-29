@@ -23,7 +23,7 @@ export function EpubReader({ chapter, bookData, onClose, className }: EpubReader
   const shadowRef = useRef<HTMLDivElement>(null)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
 
-  // 使用 Shadow DOM 来隔离 EPUB 内容样式
+  // Use the Shadow DOM to isolate EPUB content styles
   useEffect(() => {
     if (!shadowRef.current) return
     
@@ -34,7 +34,7 @@ export function EpubReader({ chapter, bookData, onClose, className }: EpubReader
     shadowRoot.innerHTML = `<div>${content}</div>`
   }, [chapterHtmlContent, chapter.content])
 
-  // 加载章节的HTML内容
+  // Load the chapter's HTML content
   useEffect(() => {
     const loadChapterHtml = async () => {
       if (!chapter || !bookData) {
@@ -47,12 +47,12 @@ export function EpubReader({ chapter, bookData, onClose, className }: EpubReader
         const htmlContent = await epubProcessor.getSingleChapterHTML(bookData.book, chapter.href || '')
         setChapterHtmlContent(htmlContent)
       } catch (error) {
-        console.error('加载章节HTML失败:', error)
-        // 如果获取HTML失败，回退到使用原始content
+        console.error('Failed to load chapter HTM:', error)
+        // If retrieving the HTML fails, fall back to using the original content.
         setChapterHtmlContent(chapter.content)
       } finally {
         setIsLoadingHtml(false)
-        // 章节加载完成后滚动到顶部
+        // Scroll to the top after the chapter has loaded
         if (scrollAreaRef.current) {
           const scrollViewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]')
           if (scrollViewport) {
@@ -67,7 +67,7 @@ export function EpubReader({ chapter, bookData, onClose, className }: EpubReader
 
   return (
     <div className={cn("w-full space-y-4", className)}>
-      {/* 主要阅读区域 */}
+      {/*  Main reading area */}
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">

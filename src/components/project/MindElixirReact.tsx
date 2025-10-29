@@ -42,11 +42,11 @@ const MindElixirReact = forwardRef<MindElixirReactRef, MindElixirReactProps>(
       }
     }
 
-    // 计算数据的简单哈希值，用于比较数据是否变化
+    // Calculate a simple hash value for the data to compare whether the data has changed.
     useEffect(() => {
       if (data) {
-        // 使用简单的字符串化方法创建哈希
-        // 注意：这不是真正的哈希，只是一种简单的比较方法
+        // Create a hash using a simple stringification method
+        // Note: This is not a true hash, but just a simple comparison method.
         const hash =
           JSON.stringify(data.nodeData.id) +
           JSON.stringify(data.nodeData.topic) +

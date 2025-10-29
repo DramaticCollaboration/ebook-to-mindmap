@@ -6,7 +6,7 @@ export interface NodeObj {
   tags?: string[]
   children?: NodeObj[]
 }
-// 总结父id的第start到end个节点的内容
+// Summarize the contents of the start to end nodes of the parent ID
 export interface Summary {
   id: string
   label: string
@@ -25,30 +25,30 @@ export interface Summary {
 }
 \`\`\`
 
-使用符合  {
-  nodeData: NodeObj
-  summaries?: Summary[]
-} 格式的 JSON 回复用户，这是一个表达**思维导图数据**的递归结构。
+with JSON in the format { 
+  nodeData: NodeObj 
+  summaries?: Summary[] 
+}. This is a recursive structure representing **mind map data**. 
 
-**注意！！nodeData、summaries 在同一层级！！**
+**Note!! nodeData and summaries are at the same level!!** ** 
 
-**严格遵守**：
-- 节点 ID 使用递增数字即可
-- 注意不要一昧使用兄弟节点关系，适当应用父子级别的分层
-- 向节点插入 tags 可选：核心、案例、实践、金句
-- Summary 是总结多个同父节点的子节点的工具，会使用花括号把总结文本显示在指定子节点侧边，因为节点存在两侧分布的情况，禁止总结根节点
-- 适当添加 Summary，不要添加多余的 Summary
-- 最后添加一个金句节点记录几句本章金句
-- 适当添加表达该节点内涵的 emoji
-- 确保JSON格式正确，不要返回任何JSON以外的内容
-- 如果内容是致谢、目录、前言、序言、参考文献、出版社介绍、引用说明等的页面，请直接回复"{nodeData:null}"
+Strictly adhere to the following:** 
+- Use incrementing numbers for node IDs 
+. - Avoid using sibling node relationships indiscriminately; apply parent-child hierarchical structures appropriately. 
+- Insert tags into nodes: Optional tags include Core, Case Studies, Practices, and Quotes. 
+- Summary is a tool for summarizing multiple child nodes of the same parent node. It will use curly braces to display the summary text next to the specified child node. Because nodes may be distributed on both sides, do not summarize the root node. 
+- Add appropriate Summary entries, but avoid adding redundant ones 
+. - Finally, add a Quote node to record a few key quotes from this chapter. 
+- Add appropriate emojis to express the meaning of the node 
+. - Ensure the JSON format is correct; do not return any content other than JSON. 
+- If the content is an acknowledgment, table of contents, preface, introduction, references, publisher information, citation notes, etc., please reply directly with "{nodeData:null}". 
 `
   
   return userPrompt
 }
 
 export const getMindMapArrowPrompt = () => {
-  const userPrompt = `你需要为已有的思维导图添加箭头连接，以显示不同节点之间的关联关系。
+  const userPrompt = `You need to add arrow connections to existing mind maps to show the relationships between different nodes. 
 \`\`\`ts
 export interface NodeObj {
   topic: string
@@ -92,16 +92,18 @@ export interface Arrow {
 }
 \`\`\`
 
-使用符合  {
-  arrows?: Arrow[]
-} 格式的 JSON 回复用户。
+Reply 
+to the user 
+using JSON formatted as \`{ 
+  arrows?: Arrow[] } \`. 
+**Strictly adhere to**: 
+- Arrow can add arrows connecting any nodes, label indirectly indicates the relationship between two nodes, and delta's default value is 50,50. **Direct parent-child relationships do not require links** 
+- **Direct parent-child relationships do not require Arrow links**
 
 
-**严格遵守**：
-- Arrow 可以添加连接任意节点的箭头，label 间接说明两个节点的联系，delta 的默认值为 50,50。**直接的父子关系不需要链接**
-- **直接的父子关系不需要使用 Arrow 链接**
-- 只能添加 6 条以下 Arrow，请对最关键的节点关系进行链接
-- 确保JSON格式正确，不要返回任何JSON以外的内容
+
+- You can only add 6 or fewer Arrows. Please link the most critical node relationships. 
+- Make sure the JSON format is correct and do not return anything other than JSON. 
 `
   
   return userPrompt

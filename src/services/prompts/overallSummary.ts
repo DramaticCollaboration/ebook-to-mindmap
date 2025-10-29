@@ -1,13 +1,13 @@
 // 全书总结相关的prompt模板
 
 export const getOverallSummaryPrompt = (bookTitle: string, chapterInfo: string, connections: string) => {
-  const userPrompt = `书籍章节结构：
+  const userPrompt = `Book chapter structure：
 ${chapterInfo}
 
-章节关联分析：
+Chapter correlation analysis:
 ${connections}
 
-以上是《${bookTitle}》这本书的重点内容，请生成一个全面的总结报告，帮助读者快速掌握全书精髓。`
-  
+The above summarizes the key points of the book 《${bookTitle}》. Please generate a comprehensive summary report to help readers quickly grasp the essence of the book. 
+`
   return userPrompt
 }

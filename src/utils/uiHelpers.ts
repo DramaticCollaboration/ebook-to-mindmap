@@ -24,13 +24,13 @@ export const scrollToTop = () => {
 export const openInMindElixir = async (mindmapData: MindElixirData, title: string) => {
   try {
     await launchMindElixir(mindmapData)
-    toast.success(`已成功发送"${title}"到 Mind Elixir Desktop`, {
+    toast.success(`Successfully sent "${title}" to Mind Elixir Deskto`, {
       duration: 3000,
       position: 'top-center',
     })
   } catch (error) {
-    console.error('启动 Mind Elixir 失败:', error)
-    toast.error('启动 Mind Elixir 失败', {
+    console.error('Failed to start Mind Elixir:', error)
+    toast.error('Failed to start Mind Elixir', {
       duration: 5000,
       position: 'top-center',
     })
@@ -48,19 +48,19 @@ export const downloadMindMap = async (mindElixirInstance: MindElixirInstance, ti
     // 查找对应的下载方法
     const method = downloadMethodList.find((item) => item.type === format)
     if (!method) {
-      throw new Error(`不支持的格式: ${format}`)
+      throw new Error(`Unsupported format: ${format}`)
     }
 
     // 执行下载
     await method.download(mindElixirInstance)
 
-    toast.success(`${title} 已成功导出为 ${format} 格式`, {
+    toast.success(`${title} has been successfully exported to ${format} format`, {
       duration: 3000,
       position: 'top-center',
     })
   } catch (error) {
-    console.error('导出思维导图失败:', error)
-    toast.error(`导出失败: ${error instanceof Error ? error.message : '未知错误'}`, {
+    console.error('Failed to export mind map:', error)
+    toast.error(`Export failed: ${error instanceof Error ? error.message : 'Unknown error'}`, {
       duration: 5000,
       position: 'top-center',
     })

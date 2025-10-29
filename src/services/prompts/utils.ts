@@ -1,11 +1,11 @@
-// Prompt工具函数
+// Prompt utility function
 
 /**
- * 获取语言指令
- * @param language 输出语言
- * @returns 对应语言的指令文本
+ * Get language instructions
+ * @param language Output language
+ * @returns The command text for the corresponding language
  */
-export const getLanguageInstruction = (language: 'en' | 'zh' | 'ja' | 'fr' | 'de' | 'es' | 'ru' | 'auto' = 'en'): string => {
+export const getLanguageInstruction = (language: 'ko' |'en' | 'zh' | 'ja' | 'fr' | 'de' | 'es' | 'ru' | 'auto' = 'en'): string => {
   switch (language) {
     case 'zh':
       return '请用中文回复。'
@@ -19,6 +19,8 @@ export const getLanguageInstruction = (language: 'en' | 'zh' | 'ja' | 'fr' | 'de
       return 'Por favor responda en español.'
     case 'ru':
       return 'Пожалуйста, отвечайте на русском языке.'
+    case 'ko':
+        return '한국어로 대답해 주세요.'
     case 'en':
     case 'auto':
     default:
@@ -27,6 +29,6 @@ export const getLanguageInstruction = (language: 'en' | 'zh' | 'ja' | 'fr' | 'de
 }
 
 /**
- * 语言类型定义
+ * Language type definition
  */
-export type SupportedLanguage = 'en' | 'zh' | 'ja' | 'fr' | 'de' | 'es' | 'ru' | 'auto'
+export type SupportedLanguage = 'ko' | 'en' | 'zh' | 'ja' | 'fr' | 'de' | 'es' | 'ru' | 'auto'

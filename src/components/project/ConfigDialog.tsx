@@ -17,7 +17,6 @@ interface ConfigDialogProps {
 
 export function ConfigDialog({ processing }: ConfigDialogProps) {
   const { t } = useTranslation()
-  // 使用zustand store管理配置
   const aiConfig = useAIConfig()
   const processingOptions = useProcessingOptions()
   const {
@@ -33,7 +32,7 @@ export function ConfigDialog({ processing }: ConfigDialogProps) {
     setOutputLanguage
   } = useConfigStore()
 
-  // 从store中解构状态值
+  // Deconstruct state values ​​from the store
   const { provider: aiProvider, apiKey, apiUrl, model, temperature } = aiConfig
   const { processingMode, bookType, useSmartDetection, skipNonEssentialChapters, outputLanguage } = processingOptions
 
@@ -66,6 +65,13 @@ export function ConfigDialog({ processing }: ConfigDialogProps) {
       modelPlaceholder: t('config.modelPlaceholder'),
       url: 'https://share.302.ai/BJ7iSL',
     },
+      qwen3: {
+          apiKeyLabel: 'API Token',
+          apiKeyPlaceholder: 'API Token',
+          apiUrlPlaceholder: 'https://llm-api.empasy.com/v1',
+          modelPlaceholder: 'Qwen3-VL-8B-Instruct...',
+          url: 'https://empasy.com/',
+      },
   }
 
   return (
@@ -122,6 +128,7 @@ export function ConfigDialog({ processing }: ConfigDialogProps) {
                         <SelectItem value="openai">{t('config.openaiCompatible')}</SelectItem>
                         <SelectItem value="ollama">Ollama</SelectItem>
                         <SelectItem value="302.ai">302.AI</SelectItem>
+                          <SelectItem value="qwen3">Qwen3</SelectItem>
                       </SelectContent>
                     </Select>
                     <Button variant="link" className="p-0 h-auto text-xs shrink-0" asChild>
@@ -148,7 +155,7 @@ export function ConfigDialog({ processing }: ConfigDialogProps) {
                 </div>
               </div>
 
-              {(aiProvider === 'openai' || aiProvider === 'ollama' || aiProvider === '302.ai') && (
+              {(aiProvider === 'openai' || aiProvider === 'ollama' || aiProvider === '302.ai'|| aiProvider === 'qwen3') && (
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
@@ -240,6 +247,7 @@ export function ConfigDialog({ processing }: ConfigDialogProps) {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="auto">{t('config.outputLanguageAuto')}</SelectItem>
+                      <SelectItem value="ko">한국어</SelectItem>
                     <SelectItem value="en">English</SelectItem>
                     <SelectItem value="zh">中文</SelectItem>
                     <SelectItem value="ja">日本語</SelectItem>

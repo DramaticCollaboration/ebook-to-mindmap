@@ -11,39 +11,39 @@ import type { MindElixirReactRef } from './project/MindElixirReact'
 import { useTranslation } from 'react-i18next'
 
 interface MindMapCardProps {
-  /** 章节ID */
-  id: string
-  /** 章节标题 */
-  title: string
-  /** 章节内容（原始内容） */
-  content: string
-  /** 思维导图数据 */
-  mindMapData: MindElixirData
-  /** 章节索引 */
-  index: number
+    /** Chapter ID */
+    id: string
+    /** Chapter Title */
+    title: string
+    /** Chapter content (original content) */
+    content: string
+    /** Mind map data*/
+    mindMapData: MindElixirData
+    /** Chapter index */
+    index: number
 
-  /** 清除缓存的回调函数 */
-  onClearCache?: (chapterId: string) => void
-  /** 在MindElixir中打开的回调函数 */
-  onOpenInMindElixir?: (mindmapData: MindElixirData, title: string) => void
-  /** 下载思维导图的回调函数 */
-  onDownloadMindMap?: (mindElixirInstance: MindElixirInstance, title: string, format: string) => void
-  /** 是否显示清除缓存按钮 */
-  showClearCache?: boolean
-  /** 是否显示查看内容按钮 */
-  showViewContent?: boolean
-  /** 是否显示复制按钮 */
-  showCopyButton?: boolean
-  /** 是否显示在MindElixir中打开按钮 */
-  showOpenInMindElixir?: boolean
-  /** 是否显示下载按钮 */
-  showDownloadButton?: boolean
-  /** 自定义类名 */
-  className?: string
-  /** 思维导图容器的自定义类名 */
-  mindMapClassName?: string
-  /** MindElixir选项 */
-  mindElixirOptions?: Partial<Options>
+    /** Callback function to clear cache*/
+    onClearCache?: (chapterId: string) => void
+    /** Callback function opened in MindElixir */
+    onOpenInMindElixir?: (mindmapData: MindElixirData, title: string) => void
+    /** Callback function for downloading mind map*/
+    onDownloadMindMap?: (mindElixirInstance: MindElixirInstance, title: string, format: string) => void
+    /** Should the "Clear Cache" button be displayed? */
+    showClearCache?: boolean
+    /** Show/ content button */
+    showViewContent?: boolean
+    /** Should the copy button be displayed? */
+    showCopyButton?: boolean
+    /** Should the open button be displayed in MindElixir? */
+    showOpenInMindElixir?: boolean
+    /** Show download button? */
+    showDownloadButton?: boolean
+    /** Custom class name */
+    className?: string
+    /** Custom class name of mind map container*/
+    mindMapClassName?: string
+    /** MindElixir options */
+    mindElixirOptions?: Partial<Options>
 }
 
 export const MindMapCard: React.FC<MindMapCardProps> = ({
